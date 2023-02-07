@@ -1,13 +1,20 @@
 package jpql;
 
+import org.hibernate.annotations.BatchSize;
+
 import javax.persistence.*;
 
 @Entity
+@NamedQuery(
+        name = "Member.findByUsername",
+        query = "SELECT m from Member m WHERE m.username = :username"
+)
 public class Member {
 
     @Id @GeneratedValue
     private Long id;
     private String username;
+
     private int age;
 
 

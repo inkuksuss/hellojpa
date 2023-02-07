@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.Collection;
 import java.util.List;
 
 public class JpaMain {
@@ -16,31 +17,48 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Team team = new Team();
-            team.setName("TeamA");
-            em.persist(team);
+            Team teamA = new Team();
+            teamA.setName("TeamA");
+            em.persist(teamA);
 
-            Member member = new Member();
-            member.setUsername("user1");
-            member.setAge(10);
-            member.changeTeam(team);
+            Team teamB = new Team();
+            teamB.setName("TeamB");
+            em.persist(teamB);
+
+            Member member1 = new Member();
+            member1.setUsername("user1");
+//            member1.setAge(20);
+            member1.changeTeam(teamA);
 
             Member member2 = new Member();
             member2.setUsername("user2");
-            member2.setAge(10);
-//            member.changeTeam(team);
+//            member2.setAge(20);
+            member2.changeTeam(teamA);
 
-            em.persist(member);
+            Member member3 = new Member();
+            member3.setUsername("user3");
+//            member3.setAge(20);
+            member3.changeTeam(teamB);
+
+            em.persist(member1);
             em.persist(member2);
+            em.persist(member3);
 
-            em.flush();
+//            em.flush();
+//            em.clear();
+
+            int resultList = em.createQuery("update Member m set m.age = 30")
+                    .executeUpdate();
+
+            System.out.println("resultList = " + resultList);
+
             em.clear();
 
-            String query = "select function('group_concat', m.username) from Member m";
-            String singleResult = em.createQuery(query, String.class).getSingleResult();
+            Member findMember1 = em.find(Member.class, member1.getId());
+            Member findMember2 = em.find(Member.class, member2.getId());
 
-            System.out.println("singleResult = " + singleResult);
-
+            System.out.println("findMember1 = " + findMember1);
+            System.out.println("findMember2 = " + findMember2);
 
             tx.commit();
         } catch (Exception e) {
